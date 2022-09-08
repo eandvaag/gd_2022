@@ -496,6 +496,9 @@ function compute_stats() {
 //     var displayElement = parent.getElementsByClassName("rangeValues")[0];
 //         displayElement.innerHTML = slide1 + " - " + slide2;
 //   }
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
 
 
 $(document).ready(function() {
@@ -623,6 +626,31 @@ $(document).ready(function() {
         value: "All",
         text: "All"
     }));
+
+    $("#composer_combo").append($('<option>', {
+        value: "All",
+        text: "All"
+    }));
+    for (composer of composers) {
+        $("#composer_combo").append($('<option>', {
+            value: composer["name"],
+            text: composer["name"]
+        }));
+    }
+
+    $("#opera_combo").append($('<option>', {
+        value: "All",
+        text: "All"
+    }));
+    for (title of titles) {
+        $("#opera_combo").append($('<option>', {
+            value: title,
+            text: title
+        }));
+    }
+
+
+
     for (librettist of Object.keys(performance_data).sort()) {
         $("#librettist_combo").append($('<option>', {
             value: librettist,
@@ -632,60 +660,182 @@ $(document).ready(function() {
 
 
     $("#opera_combo").change(function() {
-        update_graph()
+        update_graph();
     });
+
 
     $("#composer_combo").change(function() {
         let librettist = $("#librettist_combo").val();
         let composer = $("#composer_combo").val();
+        let previous_title = $("#opera_combo").val();
 
         $("#opera_combo").empty();
 
-        if (librettist === "All" && composer === "All") {
+        //if (librettist === "All" && composer === "All") {
             $("#opera_combo").append($('<option>', {
                 value: "All",
                 text: "All"
             }));
-        }
-        else {
-            for (title of Object.keys(performance_data[librettist][composer]).sort()) {
+
+            console.log("librettist", librettist, "composer", composer);
+            let title_options = [];
+
+            if (librettist === "All") {
+                if (composer === "All") {
+                    for (l of Object.keys(performance_data)) {
+                        for (c of Object.keys(performance_data[l])) {
+                            for (title of Object.keys(performance_data[l][c])) {
+                                title_options.push(title);
+                            }
+                        }
+                    }
+                    title_options = title_options.filter(onlyUnique);
+                }
+                else {
+                    for (l of Object.keys(performance_data)) {
+                        if (composer in performance_data[l]) {
+                            for (title of Object.keys(performance_data[l][composer])) {
+                                title_options.push(title);
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                if (composer === "All") {
+                    for (c of Object.keys(performance_data[librettist])) {
+                        for (title of Object.keys(performance_data[librettist][c])) {
+                            title_options.push(title);
+                        }
+                    }
+                }
+                else {
+                    title_options = Object.keys(performance_data[librettist][composer]);
+                }
+            }
+
+            // let title_options = [];
+            // if (librettist === "All") {
+            //     if (composer === "All") {
+            //         for (l of Object.keys(performance_data)) {
+            //             for (c of Object.keys(performance_data[l])) {
+            //                 for (title of Object.keys(performance_data[l][c])) {
+            //                     title_options.push(title);
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     else {
+            //         for (l of Object.keys(performance_data)) {
+            //             if (composer in performance_data[l]) {
+            //                 for (title of Object.keys(performance_data[l][composer])) {
+            //                     title_options.push(title);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            // else {
+            //     if (composer === "All") {
+            //         for (c of Object.keys(performance_data[librettist])) {
+            //             for (title of Object.keys(performance_data[librettist][c])) {
+            //                 title_options.push(title);
+            //             }
+            //         }
+            //     }
+            //     else {
+            //         for (title of Object.keys(performance_data[librettist][composer])) {
+            //             title_options.push(title);
+            //         }
+            //     }
+            // }
+
+
+        //}
+        //else {
+            console.log("title_options", title_options);
+            for (title of title_options.sort()) {
                 $("#opera_combo").append($('<option>', {
                     value: title,
                     text: title
                 }));
             }
+        //}
+
+        if (title_options.includes(previous_title)) {
+            $("#opera_combo").val(previous_title).change();
         }
-        $("#opera_combo").val($("#opera_combo:first").val()).change();
+        else {
+            $("#opera_combo").val($("#opera_combo:first").val()).change();
+        }
     });
+
+
+
 
 
     $("#librettist_combo").change(function() {
         let librettist = $("#librettist_combo").val();
 
-        $("#composer_combo").empty();
-        $("#opera_combo").empty();
+        let previous_composer = $("#composer_combo").val();
+        // let title = $("#opera_combo").val();
 
-        if (librettist === "All") {
+        $("#composer_combo").empty();
+        //$("#opera_combo").empty();
+
+        //if (librettist === "All") {
             $("#composer_combo").append($('<option>', {
                 value: "All",
                 text: "All"
-            }));   
-        }
-        else {
-            for (composer of Object.keys(performance_data[librettist]).sort()) {
-                $("#composer_combo").append($('<option>', {
-                    value: composer,
-                    text: composer
-                }));
+            }));
+        //}
+        //else {
+        let composer_options = [];
+        if (librettist === "All") {
+            for (c of composers) {
+                composer_options.push(c["name"]);
             }
         }
-        $("#composer_combo").val($("#composer_combo:first").val()).change();
+        else {
+            composer_options = Object.keys(performance_data[librettist]);
+        }
+
+        // for (composer of composers) {
+        //     composer_options.push(composer["name"]);
+        // }
+
+
+
+            for (c of composer_options.sort()) {
+                $("#composer_combo").append($('<option>', {
+                    value: c,
+                    text: c
+                }));
+            }
+        //}
+        // let exists = false; 
+        // $('#composer_combo  option').each(function(){
+        //     if (this.value == previous_composer) {
+        //         exists = true;
+        //     }
+        // });
+        if (composer_options.includes(previous_composer)) {
+            $("#composer_combo").val(previous_composer).change();
+        }
+        else {
+            $("#composer_combo").val($("#composer_combo:first").val()).change();
+        }
     });
 
 
 
-    $("#librettist_combo").prop("selectedIndex", -1);
-
+    // $("#librettist_combo").prop("selectedIndex", 0);
+    // $("#composer_combo").prop("selectedIndex", 0);
+    // $("#title_combo").prop("selectedIndex", 0);
+    //$("#librettist_combo").val($("#composer_combo:first").val()).change();
+    //$("#librettist_combo").val($("#librettist_combo:first").val());
+    //$("#composer_combo").val($("#composer_combo:first").val());
+    //$("#title_combo").val($("#title_combo:first").val());
 
     /*
     for (title of Object.keys(title_performances)) {
@@ -796,7 +946,7 @@ function update_graph() {
     let cur_composer = $("#composer_combo").val();
     let cur_title = $("#opera_combo").val();
 
-    let s_key = cur_librettist + "/" + cur_composer + "/" + cur_title;
+    // let sel_key = cur_librettist + "/" + cur_composer + "/" + cur_title;
 
 
 
@@ -804,10 +954,138 @@ function update_graph() {
     console.log("cur_composer", cur_composer);
     console.log("cur_title", cur_title);
 
+    let s_keys = [];
+    if ((cur_librettist === "All" && cur_composer === "All") && cur_title === "All") {
+        s_keys = ["All/All/All"];
+    }
+    // else if (cur_librettist !== "All" && cur_composer !== "All" && cur_title !== "All") {
+    //     s_keys = [s_key];
+    // }
+
+    else {
+
+        let candidate_s_keys = [];
+        let candidate_librettists = [];
+        let candidate_composers = [];
+        let candidate_titles = [];
+
+        if (cur_librettist === "All") {
+            for (librettist of librettists) {
+                candidate_librettists.push(librettist["name"]);
+            }
+
+        }
+        else {
+            candidate_librettists = [cur_librettist];
+        }
+
+        if (cur_composer === "All") {
+            for (composer of composers) {
+                candidate_composers.push(composer["name"]);
+            }
+
+        }
+        else {
+            candidate_composers = [cur_composer];
+        }
+
+        
+        if (cur_title === "All") {
+            for (title of titles) {
+                candidate_titles.push(title);
+            }
+
+        }
+        else {
+            candidate_titles = [cur_title];
+        }
+
+
+        for (candidate_librettist of candidate_librettists) {
+            for (candidate_composer of candidate_composers) {
+                for (candidate_title of candidate_titles) {
+                    candidate_s_keys.push(candidate_librettist + "/" + candidate_composer + "/" + candidate_title);
+                }
+            }
+        }
+
+
+
+        for (s_key of candidate_s_keys) {
+            let elements = s_key.split("/");
+            let librettist = elements[0];
+            let composer = elements[1];
+            let title = elements[2];
+    
+            let valid = (composer in performance_data[librettist]) && (title in performance_data[librettist][composer]);
+    
+            if (valid) {
+                s_keys.push(librettist + "/" + composer + "/" + title);
+            }
+        }
+
+    }
+    // else {
+    //     if (cur_librettist === "All") {
+    //         for (librettist of Object.keys(performance_data)) {
+    //             if (cur_composer === "All") {
+    //                 for (composer of Object.keys(performance_data[librettist])) {
+    //                     for (title of Object.keys(performance_data[librettist][composer])) {
+    //                         if (title === cur_title) {
+    //                             s_keys.push(librettist + "/" + composer + "/" + title);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //             else {
+    //                 if (cur_title === "All") {
+    //                     if (cur_composer in performance_data[librettist]) {
+    //                         for (title of Object.keys(performance_data[librettist][cur_composer])) {
+    //                             s_keys.push(librettist + "/" + cur_composer + "/" + title);
+    //                         }
+    //                     }
+    //                 }
+    //                 else {
+    //                     s_keys.push(librettist + "/" + cur_composer + "/" + cur_title);
+    //                 }
+    //             }
+    //         } 
+    //     }
+    //     else {
+    //         if (cur_composer === "All") {
+    //             for (composer of Object.keys(performance_data[cur_librettist])) {
+    //                 if (composer in performance_data[cur_librettist]) {
+    //                     if (cur_title === "All") {
+    //                         for (title of Object.keys(performance_data[cur_librettist][composer])) {
+    //                             s_keys.push(cur_librettist + "/" + composer + "/" + title);
+    //                         }
+    //                     }
+    //                     else {
+    //                         s_keys.push(cur_librettist + "/" + composer + "/" + cur_title);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         else {
+    //             if (cur_title === "All") {
+    //                 for (title of Object.keys(performance_data[cur_librettist][cur_composer])) {
+    //                     s_keys.push(cur_librettist + "/" + cur_composer + "/" + title);
+    //                 }
+    //             }
+    //             else {
+    //                 s_keys.push(cur_librettist + "/" + cur_composer + "/" + cur_title);
+    //             }
+    //         }
+    //     }
+    // }
+
+
+    
 
 
 
 
+    //for (s_key of s_keys) {
 
     d3.selectAll(".map_curve")
         .data(map_edges_lst)
@@ -818,7 +1096,8 @@ function update_graph() {
             if ((d["performance_year"] < cur_min_year) || (d["performance_year"] >= cur_max_year)) {
                 return 0;
             }
-            if (s_key !== "All/All/All" && s_key !== d["s_key"]) {
+            //if (s_key !== "All/All/All" && s_key !== d["s_key"]) {
+            if (s_keys[0] !== "All/All/All" && !s_keys.includes(d["s_key"])) {
                 return 0;
             }
             return 0.9;
@@ -835,7 +1114,7 @@ function update_graph() {
             if ((self_map_edges[d]["performance_year"] < cur_min_year) || (self_map_edges[d]["performance_year"] >= cur_max_year)) {
                 return 0;
             }
-            if (s_key !== "All/All/All" && s_key !== self_map_edges[d]["s_key"]) {
+            if (s_keys[0] !== "All/All/All" && !s_keys.includes(self_map_edges[d]["s_key"])) { //} !== self_map_edges[d]["s_key"]) {
                 return 0;
             }
             return 0.9;
@@ -899,7 +1178,7 @@ function update_graph() {
 
     let labelled_map_nodes = [];
 
-    if (s_key === "All/All/All") {
+    if (s_keys[0] === "All/All/All") {
 
         for (let i = 0; i < 16; i++) {
             labelled_map_nodes.push(map_nodes_lst[i]["placename"]);
@@ -920,14 +1199,25 @@ function update_graph() {
     }
     else {
 
-        let performances = performance_data[cur_librettist][cur_composer][cur_title]; // title_performances[cur_title];
-        performances.sort(function(a, b) {
-            return a["performance_year"] - b["performance_year"];
-        });
-        let premiere_performance = performances[0];
-        console.log("performances", performances)
-        for (performance of performances) {
-            labelled_map_nodes.push(performance["placename"]);
+        let premiere_performances = [];
+        for (s_key of s_keys) {
+            let elements = s_key.split("/");
+            let librettist = elements[0];
+            let composer = elements[1];
+            let title = elements[2];
+
+            //let valid = (composer in performance_data[librettist]) && (title in performance_data[librettist][composer]);
+
+            let performances = performance_data[librettist][composer][title]; // title_performances[cur_title];
+            performances.sort(function(a, b) {
+                return a["performance_year"] - b["performance_year"];
+            });
+            let premiere_performance = performances[0]["placename"];
+            //console.log("performances", performances);
+            for (performance of performances) {
+                labelled_map_nodes.push(performance["placename"]);
+            }
+            premiere_performances.push(premiere_performance);
         }
 
         d3.selectAll(".map_circle")
@@ -936,7 +1226,8 @@ function update_graph() {
             .duration(250)
             .style("opacity", function(d) {
                 if (d["highlight"]) {
-                    if (d["placename"] === premiere_performance["placename"]) {
+                    //if (d["placename"] === premiere_performance["placename"]) {
+                    if (premiere_performances.includes(d["placename"])) {
                         return 1;
                     }
                     else {
@@ -988,6 +1279,7 @@ function update_graph() {
                     return 0;
                 }
             });
+
 
 
 
@@ -2095,6 +2387,27 @@ function draw_graph() {
         .attr("fill", function(d) {
             let c = "rgb(" + d["color"][0] + "," + d["color"][1] + "," + d["color"][2] + ")";
             console.log("c", c);
+            return c;
+        })
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
+
+    
+    g.timeline.selectAll("timeline_year_legend_circle")
+        .data(timeline_circle_legend_data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) {
+            return d["cx"] + 20;
+        })
+        .attr("cy", function(d) {
+            return d["cy"];
+        })
+        .attr("r", function(d) {
+            return d["radius"] - 5;
+        })
+        .attr("fill", function(d) {
+            let c = "black";
             return c;
         })
         .attr("stroke", "black")
