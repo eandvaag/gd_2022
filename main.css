@@ -1,0 +1,94 @@
+body {
+	background-color: black; /* #f7f6f2; */
+}
+
+div {
+    font-size: 32px; 
+    font-family: arial;
+}
+
+
+.continent {
+	fill: grey; /*#f0e4dd;*/
+	stroke: none;
+}
+
+.axis path,
+.axis line{
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	font-family: arial;
+	font-size: 16px;
+}
+
+
+text {
+	fill: rgb(255, 204, 163); /* black;*/
+}
+
+.label_text {
+	text-decoration: underline;
+	font-weight: 700;
+}
+
+.axis_text {
+	font-weight: 700;
+}
+
+
+#timeline_container {
+    width: 500px; 
+    height: 1000px; 
+    background-color: black; /* #faf9f0;*/
+    border-top: 1px solid white; /*black;*/
+    border-left: 1px solid white; /* black;*/
+    border-bottom: 1px solid white; /*black;*/
+	border-top-left-radius: 25px;
+	border-bottom-left-radius: 25px;
+	padding-left: 20px;
+}
+
+#map_container {
+	width: 1300px; 
+	height: 1000px; 
+	border: 1px solid white; /* black;*/
+	border-top-right-radius: 25px;
+	border-bottom-right-radius: 25px;
+}
+
+#map_svg {
+	background-color: black; /* #f5f9fa; */
+	border-top-right-radius: 25px;
+	border-bottom-right-radius: 25px;
+}
+
+
+
+.nonfixed_dropdown {
+	background-color: black; /*#222621;*/
+	color:  white;
+	width:  100%;
+	padding: 2px 0px;
+	margin: 0px 0px;
+	font-size: 18px;
+ }
+ 
+
+#slider-range .ui-slider-range { 
+	background: grey; /*white; */
+}
+
+#slider-range .ui-state-default, .ui-widget-content .ui-state-default {
+	background: none;
+	background-color: grey; /*white; *//*#FFF; */
+	border: 1px solid black;
+}
+
+
+.ui-slider-handle {
+    padding-right: 5px;
+}
