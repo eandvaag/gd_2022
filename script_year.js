@@ -222,7 +222,7 @@ let composers = [
 
 
 let min_year = 1775;
-let max_year = 1835; //1833;
+let max_year = 1835;
 
 let cur_min_year = min_year;
 let cur_max_year = max_year;
@@ -230,8 +230,8 @@ let cur_max_year = max_year;
 let min_node_size = 5;
 let max_node_size = 25;
 
-let min_color = [252, 206, 126]; //[255, 204, 163]; //[240, 236, 24];
-let max_color = [255, 0, 0]; // [223, 46, 40]; //[50, 81, 207]; 
+let min_color = [252, 206, 126];
+let max_color = [255, 0, 0];
 
 
 const map_width = $("#map_container").width();
@@ -273,30 +273,19 @@ const chart_height = 1000;
 
 
 function color_map(num, min_num, max_num, c1, c2) {
-    // let num2 = Math.floor(num / 1) * 1;
-    // console.log("num", num);
-    // console.log("num2", num2);
-    //console.log("num", num);
-    num1 = (Math.floor(num / 10) * 10); // - 2.5;
-    // if (("" + num)[3] <= 5) {
-    //     num 
-    // }
-    //num2 = num1 - 5;
+
+    let num1 = (Math.floor(num / 10) * 10);
     
+    let num2;
     if (parseFloat(("" + num)[3]) < 5) {
         num2 = num1 - 5;
     }
     else {
         num2 = num1 + 5;
     }
-    // console.log("num", num, "num1", num1, "num2", num2);
-    // let dec = num % 10;
-    // if (dec <= 0.5) {
-    //     num += 10;
-    // }
+
     let fraction = (num2 - min_num) / (max_num - min_num);
-    // console.log("fraction", fraction);
-    // fraction = parseFloat(("" + fraction).substring(0, 3));
+
     let r = ((c2[0] - c1[0]) * fraction) + c1[0];
     let g = ((c2[1] - c1[1]) * fraction) + c1[1];
     let b = ((c2[2] - c1[2]) * fraction) + c1[2];
@@ -339,7 +328,6 @@ function initialize_data(performances) {
     }
     
     titles = [];
-    // title_performances = {};
     for (performance of performances) {
         let librettist = performance["librettist"];
         let composer = performance["composer"];
@@ -352,10 +340,6 @@ function initialize_data(performances) {
         if (!(titles.includes(title))) {
             titles.push(title);
         }
-        // let s_key = title + "/" + composer + "/" + librettist;
-        // if (!(s_key in title_performances)) {
-        //     title_performances[s_key] = [];
-        // }
 
         if (!(librettist in performance_data)) {
             performance_data[librettist] = {};
@@ -378,13 +362,6 @@ function initialize_data(performances) {
             "performance_year": parseInt(performance_year),
             "placename": placename
         });
-
-        // console.log(s_key);
-        // console.log(title_performances);
-        // title_performances[s_key].push({
-        //     "performance_year": parseInt(performance_year),
-        //     "placename": placename
-        // });
 
         composers[composer_idx[composer]]["performance_years"].push(parseInt(performance_year));
         librettists[librettist_idx[librettist]]["performance_years"].push(parseInt(performance_year));
@@ -435,67 +412,6 @@ function initialize_data(performances) {
 }
 
 
-function compute_stats() {
-    let num_collaborations_lst = [];
-    let num_collaborators_lst = [];
-    for (composer of composers) {
-        let num_collaborations = 0;
-        let num_collaborators = 0;
-        for (collaborator of Object.keys(composer["collaborators"])) {
-            num_collaborations += composer["collaborators"][collaborator];
-            num_collaborators += 1;
-        }
-        num_collaborations_lst.push(num_collaborations);
-        num_collaborators_lst.push(num_collaborators);
-    }
-    /*
-    console.log("composers:")
-    console.log("max num_collaborations", Math.max(...num_collaborations_lst));
-    console.log("min num_collaborations", Math.min(...num_collaborations_lst));
-    console.log("mean num_collaborations", mean(num_collaborations_lst));
-
-    console.log("max num_collaborators", Math.max(...num_collaborators_lst));
-    console.log("min num_collaborators", Math.min(...num_collaborators_lst));
-    console.log("mean num_collaborators", mean(num_collaborators_lst));
-    */    
-
-    num_collaborations_lst = [];
-    num_collaborators_lst = [];
-    for (librettist of librettists) {
-        let num_collaborations = 0;
-        let num_collaborators = 0;
-        for (collaborator of Object.keys(librettist["collaborators"])) {
-            num_collaborations += librettist["collaborators"][collaborator];
-            num_collaborators += 1;
-        }
-        num_collaborations_lst.push(num_collaborations);
-        num_collaborators_lst.push(num_collaborators);
-    }
-    /*
-    console.log("librettist:")
-    console.log("max num_collaborations", Math.max(...num_collaborations_lst));
-    console.log("min num_collaborations", Math.min(...num_collaborations_lst));
-    console.log("mean num_collaborations", mean(num_collaborations_lst));
-
-    console.log("max num_collaborators", Math.max(...num_collaborators_lst));
-    console.log("min num_collaborators", Math.min(...num_collaborators_lst));
-    console.log("mean num_collaborators", mean(num_collaborators_lst));
-    */
-
-}
-
-// function getVals(){
-//     // Get slider values
-//     var parent = this.parentNode;
-//     var slides = parent.getElementsByTagName("input");
-//       var slide1 = parseFloat( slides[0].value );
-//       var slide2 = parseFloat( slides[1].value );
-//     // Neither slider will clip the other, so make sure we determine which is larger
-//     if( slide1 > slide2 ){ var tmp = slide2; slide2 = slide1; slide1 = tmp; }
-    
-//     var displayElement = parent.getElementsByClassName("rangeValues")[0];
-//         displayElement.innerHTML = slide1 + " - " + slide2;
-//   }
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
   }
@@ -508,93 +424,6 @@ $(document).ready(function() {
     $("#opera_combo").prop("disabled", true);
 
 
-    // $("#min_year_input").change(function() {
-    //     update_graph();
-
-    // });
-
-    // $("#max_year_input").change(function() {
-    //     update_graph();
-
-    // });
-
-
-    // var sliderRange = d3
-    //         .slider() //Bottom()
-    //         .min(1775) //d3.min(data))
-    //         .max(1833) //d3.max(data))
-    //         .width(300)
-    //         .tickFormat(d3.format('.2%'))
-    //         .ticks(5)
-    //         .default([1775, 1833]) //0.015, 0.02])
-    //         .fill('#2196f3')
-    //         .on('onchange', val => {
-    //         d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
-    // });
-
-    // var slider = d3Slider.sliderHorizontal()
-    // .domain([1775, 1833]) //d3.extent(data))
-    // .width(300)
-    // .tickFormat(d3.format('.2%'))
-    // .ticks(5)
-    // .default(0.015)
-    // .on('onchange', val => {
-    //   d3.select("p#value").text(d3.format('.2%')(val));
-    // });
-
-
-    // $("#slider").slider({
-    //     min: min_year,
-    //     max: max_year,
-    //     step: 1,
-    //     range: true,
-    //     values: [min_year, max_year],
-    //     slide: function(event, ui) {
-    //         console.log("slider change");
-    //         // for (var i = 0; i < ui.values.length; ++i) {
-    //         //     $("input.sliderValue[data-index=" + i + "]").val(ui.values[i]);
-    //         // }
-    //     }
-    // });
-
-    // $("input.sliderValue").change(function() {
-    //     var $this = $(this);
-    //     $("#slider").slider("values", $this.data("index"), $this.val());
-    // });
-
-    // d3.sliderBottom();
-
-      // Initialize Sliders
-    // var sliderSections = document.getElementsByClassName("range-slider");
-    // for( var x = 0; x < sliderSections.length; x++ ){
-    //     var sliders = sliderSections[x].getElementsByTagName("input");
-    //     for( var y = 0; y < sliders.length; y++ ){
-    //     if( sliders[y].type ==="range" ){
-    //         sliders[y].oninput = getVals;
-    //         // Manually trigger event first time to display values
-    //         sliders[y].oninput();
-    //     }
-    //     }
-    // }
-
-    // var svgFilter = d3.select("#svg-filter");
-    // var sliderWidth = 500;
-    // var xYearFirst = d3.scaleLinear()
-    //     .domain([min_year, max_year])
-    //     .range([0, sliderWidth])
-    //     .clamp(true);
-    // var xYearLast = d3.scaleLinear()
-    //     .domain([min_year, max_year])
-    //     .range([0, sliderWidth])
-    //     .clamp(true);
-  
-    // var sliderYearFirst = svgFilter.append("g")
-    // .attr("class", "slider")
-    // .attr("transform", "translate(" + 30 + "," + 100 / 2 + ")");
-    // var sliderYearLast = svgFilter.append("g")
-    //     .attr("class", "slider")
-    //     .attr("transform", "translate(" + 30 + "," + 200 / 2 + ")");
-
     $( "#slider-range" ).slider({
         orientation: "vertical",
         range: true,
@@ -604,17 +433,10 @@ $(document).ready(function() {
         slide: function( event, ui ) {
             cur_max_year = min_year + (max_year - ui.values[0]);
             cur_min_year =  min_year + (max_year - ui.values[1]);
-            //console.log(new_min, new_max);
             update_graph();
-            // let new_max = ui.values[0]
-            // console.log(ui.values[0], ui.values[1]);
-          //$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
         }
       });
     $( "#slider-range").slider("disable");
-
-    //   $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-    //     " - $" + $( "#slider-range" ).slider( "values", 1 ) );
 
     readTextFile("./opera.csv");
 
@@ -671,96 +493,54 @@ $(document).ready(function() {
 
         $("#opera_combo").empty();
 
-        //if (librettist === "All" && composer === "All") {
-            $("#opera_combo").append($('<option>', {
-                value: "All",
-                text: "All"
-            }));
+        $("#opera_combo").append($('<option>', {
+            value: "All",
+            text: "All"
+        }));
 
-            console.log("librettist", librettist, "composer", composer);
-            let title_options = [];
+        let title_options = [];
 
-            if (librettist === "All") {
-                if (composer === "All") {
-                    for (l of Object.keys(performance_data)) {
-                        for (c of Object.keys(performance_data[l])) {
-                            for (title of Object.keys(performance_data[l][c])) {
-                                title_options.push(title);
-                            }
-                        }
-                    }
-                    title_options = title_options.filter(onlyUnique);
-                }
-                else {
-                    for (l of Object.keys(performance_data)) {
-                        if (composer in performance_data[l]) {
-                            for (title of Object.keys(performance_data[l][composer])) {
-                                title_options.push(title);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                if (composer === "All") {
-                    for (c of Object.keys(performance_data[librettist])) {
-                        for (title of Object.keys(performance_data[librettist][c])) {
+        if (librettist === "All") {
+            if (composer === "All") {
+                for (l of Object.keys(performance_data)) {
+                    for (c of Object.keys(performance_data[l])) {
+                        for (title of Object.keys(performance_data[l][c])) {
                             title_options.push(title);
                         }
                     }
                 }
-                else {
-                    title_options = Object.keys(performance_data[librettist][composer]);
+                title_options = title_options.filter(onlyUnique);
+            }
+            else {
+                for (l of Object.keys(performance_data)) {
+                    if (composer in performance_data[l]) {
+                        for (title of Object.keys(performance_data[l][composer])) {
+                            title_options.push(title);
+                        }
+                    }
                 }
             }
-
-            // let title_options = [];
-            // if (librettist === "All") {
-            //     if (composer === "All") {
-            //         for (l of Object.keys(performance_data)) {
-            //             for (c of Object.keys(performance_data[l])) {
-            //                 for (title of Object.keys(performance_data[l][c])) {
-            //                     title_options.push(title);
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     else {
-            //         for (l of Object.keys(performance_data)) {
-            //             if (composer in performance_data[l]) {
-            //                 for (title of Object.keys(performance_data[l][composer])) {
-            //                     title_options.push(title);
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-            // else {
-            //     if (composer === "All") {
-            //         for (c of Object.keys(performance_data[librettist])) {
-            //             for (title of Object.keys(performance_data[librettist][c])) {
-            //                 title_options.push(title);
-            //             }
-            //         }
-            //     }
-            //     else {
-            //         for (title of Object.keys(performance_data[librettist][composer])) {
-            //             title_options.push(title);
-            //         }
-            //     }
-            // }
-
-
-        //}
-        //else {
-            console.log("title_options", title_options);
-            for (title of title_options.sort()) {
-                $("#opera_combo").append($('<option>', {
-                    value: title,
-                    text: title
-                }));
+        }
+        else {
+            if (composer === "All") {
+                for (c of Object.keys(performance_data[librettist])) {
+                    for (title of Object.keys(performance_data[librettist][c])) {
+                        title_options.push(title);
+                    }
+                }
             }
-        //}
+            else {
+                title_options = Object.keys(performance_data[librettist][composer]);
+            }
+        }
+
+
+        for (title of title_options.sort()) {
+            $("#opera_combo").append($('<option>', {
+                value: title,
+                text: title
+            }));
+        }
 
         if (title_options.includes(previous_title)) {
             $("#opera_combo").val(previous_title).change();
@@ -776,20 +556,15 @@ $(document).ready(function() {
 
     $("#librettist_combo").change(function() {
         let librettist = $("#librettist_combo").val();
-
         let previous_composer = $("#composer_combo").val();
-        // let title = $("#opera_combo").val();
 
         $("#composer_combo").empty();
-        //$("#opera_combo").empty();
 
-        //if (librettist === "All") {
-            $("#composer_combo").append($('<option>', {
-                value: "All",
-                text: "All"
-            }));
-        //}
-        //else {
+        $("#composer_combo").append($('<option>', {
+            value: "All",
+            text: "All"
+        }));
+
         let composer_options = [];
         if (librettist === "All") {
             for (c of composers) {
@@ -800,25 +575,14 @@ $(document).ready(function() {
             composer_options = Object.keys(performance_data[librettist]);
         }
 
-        // for (composer of composers) {
-        //     composer_options.push(composer["name"]);
-        // }
 
+        for (c of composer_options.sort()) {
+            $("#composer_combo").append($('<option>', {
+                value: c,
+                text: c
+            }));
+        }
 
-
-            for (c of composer_options.sort()) {
-                $("#composer_combo").append($('<option>', {
-                    value: c,
-                    text: c
-                }));
-            }
-        //}
-        // let exists = false; 
-        // $('#composer_combo  option').each(function(){
-        //     if (this.value == previous_composer) {
-        //         exists = true;
-        //     }
-        // });
         if (composer_options.includes(previous_composer)) {
             $("#composer_combo").val(previous_composer).change();
         }
@@ -826,30 +590,6 @@ $(document).ready(function() {
             $("#composer_combo").val($("#composer_combo:first").val()).change();
         }
     });
-
-
-
-    // $("#librettist_combo").prop("selectedIndex", 0);
-    // $("#composer_combo").prop("selectedIndex", 0);
-    // $("#title_combo").prop("selectedIndex", 0);
-    //$("#librettist_combo").val($("#composer_combo:first").val()).change();
-    //$("#librettist_combo").val($("#librettist_combo:first").val());
-    //$("#composer_combo").val($("#composer_combo:first").val());
-    //$("#title_combo").val($("#title_combo:first").val());
-
-    /*
-    for (title of Object.keys(title_performances)) {
-        $("#opera_combo").append($('<option>', {
-            value: title,
-            text: title
-        }));
-    }
-
-    $("#opera_combo").change(function() {
-        update_graph()
-    });*/
-
-    compute_stats();
 
     d3.select("map_svg")
       .attr("preserveAspectRatio", "xMinYMin meet")
@@ -869,24 +609,6 @@ $(document).ready(function() {
 
     map_svg.call(zoom);
 
-    // var zoom = d3.zoom()
-    //     .scaleExtent([1, 8])
-    //     .on('zoom', function() {
-    //         g.selectAll('path')
-    //         .attr('transform', d3.event.transform);
-    // });
-
-    // // let map_svg = d3.select("map_svg")
-    // map_svg.call(zoom);
-
-    // var zoom = d3.behavior.zoom()
-    // .on("zoom",function() {
-    //   g.attr("transform","translate("+d3.event.translate.join(",")+")scale("+d3.event.scale+")")
-    // });
-
-    // map_svg.call(zoom);
-
-
     Promise.all([worldmap]).then(function(values){ 
         g.basemap.selectAll("path")
             .data(values[0].features)
@@ -904,64 +626,41 @@ $(document).ready(function() {
 })
 
 function zoomed() {
+
     g.basemap
-      .selectAll('path') // To prevent stroke width from scaling
+      .selectAll('path')
       .attr('transform', d3.event.transform);
 
     g.cities
-      .selectAll('path') // To prevent stroke width from scaling
+      .selectAll('path')
       .attr('transform', d3.event.transform);
 
     g.cities
-      .selectAll('.map_circle') // To prevent stroke width from scaling
+      .selectAll('.map_circle')
       .attr('transform', d3.event.transform);
 
     g.cities
-      .selectAll('.map_text') // To prevent stroke width from scaling
+      .selectAll('.map_text')
       .attr('transform', d3.event.transform);  
 
     g.cities
-      .selectAll('.map_rect') // To prevent stroke width from scaling
+      .selectAll('.map_rect')
       .attr('transform', d3.event.transform);  
-    // g.cities
-    //   .selectAll('circle') // To prevent stroke width from scaling
-    //   .attr('transform', d3.event.transform);
 
-    // g.cities
-    //     .selectAll("text")
-    //     .attr("transform", d3.event.transform);
-
-    // g.cities
-    //     .selectAll("rect")
-    //     .attr("transform", d3.event.transform);
   }
 
 
 function update_graph() {
 
-    // let cur_min_year = $("#min_year_input").val();
-    // let cur_max_year = $("#max_year_input").val();
-
     let cur_librettist = $("#librettist_combo").val();
     let cur_composer = $("#composer_combo").val();
     let cur_title = $("#opera_combo").val();
 
-    // let sel_key = cur_librettist + "/" + cur_composer + "/" + cur_title;
-
-
-
-    console.log("cur_librettist", cur_librettist);
-    console.log("cur_composer", cur_composer);
-    console.log("cur_title", cur_title);
 
     let s_keys = [];
     if ((cur_librettist === "All" && cur_composer === "All") && cur_title === "All") {
         s_keys = ["All/All/All"];
     }
-    // else if (cur_librettist !== "All" && cur_composer !== "All" && cur_title !== "All") {
-    //     s_keys = [s_key];
-    // }
-
     else {
 
         let candidate_s_keys = [];
@@ -1025,86 +724,20 @@ function update_graph() {
         }
 
     }
-    // else {
-    //     if (cur_librettist === "All") {
-    //         for (librettist of Object.keys(performance_data)) {
-    //             if (cur_composer === "All") {
-    //                 for (composer of Object.keys(performance_data[librettist])) {
-    //                     for (title of Object.keys(performance_data[librettist][composer])) {
-    //                         if (title === cur_title) {
-    //                             s_keys.push(librettist + "/" + composer + "/" + title);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //             else {
-    //                 if (cur_title === "All") {
-    //                     if (cur_composer in performance_data[librettist]) {
-    //                         for (title of Object.keys(performance_data[librettist][cur_composer])) {
-    //                             s_keys.push(librettist + "/" + cur_composer + "/" + title);
-    //                         }
-    //                     }
-    //                 }
-    //                 else {
-    //                     s_keys.push(librettist + "/" + cur_composer + "/" + cur_title);
-    //                 }
-    //             }
-    //         } 
-    //     }
-    //     else {
-    //         if (cur_composer === "All") {
-    //             for (composer of Object.keys(performance_data[cur_librettist])) {
-    //                 if (composer in performance_data[cur_librettist]) {
-    //                     if (cur_title === "All") {
-    //                         for (title of Object.keys(performance_data[cur_librettist][composer])) {
-    //                             s_keys.push(cur_librettist + "/" + composer + "/" + title);
-    //                         }
-    //                     }
-    //                     else {
-    //                         s_keys.push(cur_librettist + "/" + composer + "/" + cur_title);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         else {
-    //             if (cur_title === "All") {
-    //                 for (title of Object.keys(performance_data[cur_librettist][cur_composer])) {
-    //                     s_keys.push(cur_librettist + "/" + cur_composer + "/" + title);
-    //                 }
-    //             }
-    //             else {
-    //                 s_keys.push(cur_librettist + "/" + cur_composer + "/" + cur_title);
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    
-
-
-
-
-    //for (s_key of s_keys) {
 
     d3.selectAll(".map_curve")
         .data(map_edges_lst)
         .transition()
         .duration(250)
         .attr("opacity", function(d) {
-            //console.log(d["title"]);
             if ((d["performance_year"] < cur_min_year) || (d["performance_year"] >= cur_max_year)) {
                 return 0;
             }
-            //if (s_key !== "All/All/All" && s_key !== d["s_key"]) {
             if (s_keys[0] !== "All/All/All" && !s_keys.includes(d["s_key"])) {
                 return 0;
             }
             return 0.9;
         });
-
-
-        // g.cities.selectAll("self_path")
 
     d3.selectAll(".self_map_curve")
         .data(Object.keys(self_map_edges))
@@ -1114,67 +747,11 @@ function update_graph() {
             if ((self_map_edges[d]["performance_year"] < cur_min_year) || (self_map_edges[d]["performance_year"] >= cur_max_year)) {
                 return 0;
             }
-            if (s_keys[0] !== "All/All/All" && !s_keys.includes(self_map_edges[d]["s_key"])) { //} !== self_map_edges[d]["s_key"]) {
+            if (s_keys[0] !== "All/All/All" && !s_keys.includes(self_map_edges[d]["s_key"])) {
                 return 0;
             }
             return 0.9;
         });
-        // .enter()
-        // .append("path")
-        // .attr("class", "path")
-        // .attr("class", "self_map_curve")
-        // .attr('d', function(d) {
-        //     return map_curve(self_map_edges[d]["points"]);
-        // })
-        // .attr('stroke', function(d, i) {
-        //     let c = self_map_edges[d]["color"];
-        //     return "rgb(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + ")";
-        // })
-        // .attr("stroke-linecap", "round")
-        // .attr('fill', 'none')
-        // .attr("stroke-width", 1)
-        // .attr("opacity", 0.9)
-
-    // let links = g.cities.selectAll("path")
-    //     .data(bundle.paths)
-    //     .enter()
-    //     .append("path")
-    //     .attr("map_curve")
-    //     .attr("d", line)
-    //     .attr("fill", "none")
-    //     .attr("stroke-width", 1)
-    //     .attr("opacity", 0.9)
-    //     .attr("marker-start", function(d, i) {
-    //        let c = map_edges_lst[i]["color"];
-    //        return marker("rgb(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + ")");
-    //      })
-    //     .attr("stroke-linecap", "round")
-    //     .attr("stroke", function(d, i) {
-    //        let c = map_edges_lst[i]["color"];
-    //        return "rgb(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + ")";
-    //    });
-
-
-        
-        /*
-        let curve = d3.line().curve(d3.curveLinear);
-        g.timeline.selectAll(".path")
-            .data(timeline_curves)
-            .enter()
-            .append("path")
-            .attr("class", "path")
-            .attr("class", "timeline_link")
-            .attr('d', function(d) {
-                return curve(d["points"]);
-            })
-            .attr('stroke', function(d) {
-                return d["color"];
-            })
-            .attr("stroke-width", 1)
-            .attr("opacity", function(d) {
-                return d["opacity"];
-            })
-            .attr('fill', 'none');*/
 
     let labelled_map_nodes = [];
 
@@ -1206,14 +783,11 @@ function update_graph() {
             let composer = elements[1];
             let title = elements[2];
 
-            //let valid = (composer in performance_data[librettist]) && (title in performance_data[librettist][composer]);
-
-            let performances = performance_data[librettist][composer][title]; // title_performances[cur_title];
+            let performances = performance_data[librettist][composer][title];
             performances.sort(function(a, b) {
                 return a["performance_year"] - b["performance_year"];
             });
             let premiere_performance = performances[0]["placename"];
-            //console.log("performances", performances);
             for (performance of performances) {
                 labelled_map_nodes.push(performance["placename"]);
             }
@@ -1226,7 +800,6 @@ function update_graph() {
             .duration(250)
             .style("opacity", function(d) {
                 if (d["highlight"]) {
-                    //if (d["placename"] === premiere_performance["placename"]) {
                     if (premiere_performances.includes(d["placename"])) {
                         return 1;
                     }
@@ -1238,22 +811,10 @@ function update_graph() {
                     return 1;
                 }
             });
-        // .data(map_circles)
-        // .enter()
-        // .append("circle")
-        // .attr("class", "map_circle")
 
     }
 
-    console.log("labelled_map_nodes", labelled_map_nodes);
-
-    // g.cities.selectAll(".map_rect").remove();
-    // g.cities.selectAll(".map_text").remove();
-
-    //zoomed();
-
-    d3
-        .selectAll(".map_rect")
+    d3.selectAll(".map_rect")
         .data(map_nodes_lst)
         .transition()
         .duration(250)
@@ -1268,150 +829,26 @@ function update_graph() {
 
 
     d3.selectAll(".map_text")
-            .data(map_nodes_lst)
-            .transition()
-            .duration(250)
-            .style("opacity", function(d) {
-                if (labelled_map_nodes.includes(d["placename"])) {
-                    return 1;
-                }
-                else {
-                    return 0;
-                }
-            });
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // console.log(cur_min_year, cur_max_year);
-
-    //let tick_values = [cur_min_year, cur_max_year];
-    // chart_axis.call(d3.axisLeft(yScale).tickValues(tick_values).tickFormat(d3.format("d")).tickSize(25));
-
-
-
-    // let min_auth = 100000;
-    // let max_auth = 1;
-    // for (composer of composers) {
-    //     let years = [];
-    //     for (title in composer["titles"]) {
-    //         years = years.concat(...composer["titles"][title]);
-    //     }
-    //     years.sort();
-    //     composer["years"] = years;
-    //     let num_titles = Object.keys(composer["years"]).length;
-    //     if (num_titles > max_auth) {
-    //         max_auth = num_titles;
-    //     }
-    //     if (num_titles < min_auth) {
-    //         min_auth = num_titles;
-    //     }
-    // }
-    // for (librettist of librettists) {
-    //     let years = [];
-    //     for (title in librettist["titles"]) {
-    //         years = years.concat(...librettist["titles"][title]);
-    //     }
-    //     years.sort();
-    //     librettist["years"] = years;
-    //     let num_titles = Object.keys(librettist["years"]).length;
-    //     if (num_titles > max_auth) {
-    //         max_auth = num_titles;
-    //     }
-    //     if (num_titles < min_auth) {
-    //         min_auth = num_titles;
-    //     }
-    // }
-
-
-    // let min_map_node_weight = 100000;
-    // let max_map_node_weight = 1;
-    // for (placename of Object.keys(map_nodes)) {
-    //     if (map_nodes[placename]["years"].length > max_map_node_weight) {
-    //         max_map_node_weight = map_nodes[placename]["years"].length;
-    //     }
-    //     if (map_nodes[placename]["years"].length < min_map_node_weight) {
-    //         min_map_node_weight = map_nodes[placename]["years"].length;
-    //     }
-    // }
-
-    // min_val = Math.min(min_auth, min_map_node_weight);
-    // max_val = Math.max(max_auth, max_map_node_weight);
-
-
-
-
-
-
-
-
-
-
+        .data(map_nodes_lst)
+        .transition()
+        .duration(250)
+        .style("opacity", function(d) {
+            if (labelled_map_nodes.includes(d["placename"])) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        });
 
 
     yScale.domain([cur_min_year, cur_max_year]);
-    // chart_axis.transition().duration(250).call(d3.axisLeft(yScale).tickValues(tick_values).tickFormat(d3.format("d")).tickSize(25));
-
-    let curve = d3.line().curve(d3.curveLinear);
-    // d3.selectAll(".timeline_curve").remove();
 
 
-    //timeline_curves = [];
-    let i = 0;
-    for (collab of Object.keys(collabs)) {
-        let collaborators = collab.split("-");
-        let librettist = collaborators[0];
-        let composer = collaborators[1];
-        let weight = collabs[collab].length;
-
-        let points = [
-            [librettist_col, (librettists[librettist_idx[librettist]]["mean_year"])],
-            [composer_col, (composers[composer_idx[composer]]["mean_year"])]
-        ];
-        
-        // let fraction = (weight - min_weight) / (max_weight - min_weight);
-        // let opacity = ((max_opacity - min_opacity) * fraction) + min_opacity;
-        // let d = {
-        //     "points": points,
-        //     "color": 'black',
-        //     "opacity": opacity
-        // }
-        // timeline_curves.push(d);
-        timeline_curves[i]["points"] = points;
-        i++;
-    }
-
-
-    //g.timeline.selectAll(".path")
     d3.selectAll(".timeline_curve")
         .data(timeline_curves)
-        // .enter()
-        // .append("path")
-        // .attr("class", "path")
-        // .attr("class", "timeline_curve")
         .transition()
         .duration(250)
-        //.attr("stroke", "red")
-        // .attr("d", function(d) {
-        //     return curve([
-        //         [d["points"][0][0], yScale(d["points"][0][1])],
-        //         [d["points"][1][0], yScale(d["points"][1][1])]
-        //     ])
-        //     // return curve(d["points"]);
-        // })
-        // .attr('stroke', function(d) {
-        //     return d["color"];
-        // })
-        // .attr("stroke-width", 1)
         .attr("opacity", function(d) {
             for (point of d["points"]) {
                 if ((point[1] < cur_min_year) || (point[1] >= cur_max_year)) {
@@ -1420,147 +857,18 @@ function update_graph() {
             }
             return d["opacity"];
         });
-        // .attr('fill', 'none');
-
-    // d3.selectAll(".timeline_circle")
-    //     .data(timeline_circles)
-    //     .transition()
-    //     .duration(250)
-    //     .attr("cy", function(d) {
-    //         return yScale(d["mean_year"]);
-    //     })
-    //     .attr("r", function(d) {
-    //         if ((d["mean_year"] < cur_min_year) || (d["mean_year"] >= cur_max_year)) {
-    //             return 0;
-    //         }
-    //         return d["radius"];
-    //     });
-
-
-
-
-    // timeline_circles = [];
-    // for (composer of composers) {
-    //     let i = 0;
-    //     let comp_circles = [];
-    //     let years = composer["years"];
-    //     for (year of years) {
-            
-            
-    //         if (year >= cur_min_year && year <= cur_max_year) {
-    //             let circle = {};
-    //             circle["radius"] = range_map(i+1, min_val, max_val, min_node_size, max_node_size);
-    //             let c = color_map(year, min_year, max_year, min_color, max_color);
-    //             circle["color"] = "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
-    //             circle["cx"] = composer_col;
-    //             // circle["cy"] = yScale(composer["mean_year"]);
-    //             circle["mean_year"] = composer["mean_year"];
-    //             circle["stroke"] = false; //(i == years.length - 1);
-    //             comp_circles.push(circle);
-    //             i++;
-    //         }
-    //     }
-    //     comp_circles.sort(function(a, b) {
-    //         return b["radius"] - a["radius"];
-    //     });
-    //     if (comp_circles.length > 0)
-    //         comp_circles[0]["stroke"] = true;
-    //     timeline_circles = timeline_circles.concat(...comp_circles);
-    // }
-
-    // for (librettist of librettists) {
-    //     let i = 0;
-    //     let lib_circles = [];
-    //     let years = librettist["years"];
-    //     for (year of years) {
-            
-    //         if (year >= cur_min_year && year <= cur_max_year) {
-    //             let circle = {};
-    //             circle["radius"] = range_map(i+1, min_val, max_val, min_node_size, max_node_size);
-    //             let c = color_map(year, min_year, max_year, min_color, max_color);
-    //             circle["color"] = "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
-    //             circle["cx"] = librettist_col;
-    //             // circle["cy"] = yScale(librettist["mean_year"]);
-    //             circle["mean_year"] = librettist["mean_year"];
-    //             circle["stroke"] = false; //(i == years.length - 1);
-    //             lib_circles.push(circle);
-    //             i++;
-    //         }
-    //     }
-    //     lib_circles.sort(function(a, b) {
-    //         return b["radius"] - a["radius"];
-    //     });
-    //     if (lib_circles.length > 0)
-    //         lib_circles[0]["stroke"] = true;
-    //     timeline_circles = timeline_circles.concat(...lib_circles);
-    // }
-    
-
-
-    // d3.selectAll(".timeline_circle").remove();
-
-
-    // g.timeline.selectAll(".circle")
-    //     .data(timeline_circles)
-    //     .enter()
-    //     .append("circle")
-    //     .attr("class", "timeline_circle")
-    //     .attr("cx", function(d) {
-    //         return d["cx"];
-    //     })
-    //     .attr("cy", function(d) {
-    //         return yScale(d["mean_year"]);
-    //     })
-    //     .attr("r", function(d) {
-    //         if ((d["mean_year"] < cur_min_year) || (d["mean_year"] >= cur_max_year)) {
-    //             return 0;
-    //         }
-    //         return d["radius"];
-    //     })
-    //     .attr("fill", function(d) {
-    //         return d["color"];
-    //     })
-    //     .attr("stroke-width", function(d) {
-    //         if (d["stroke"])
-    //             return 1;
-    //         else
-    //             return 0;
-    //     })
-    //     .attr("stroke", function(d) {
-    //         return "black";
-    //     });
 
 
     d3.selectAll(".timeline_circle")
         .data(timeline_circles)
         .transition()
         .duration(250)
-        // .attr("cy", function(d) {
-        //     return yScale(d["mean_year"]);
-        // })
         .attr("r", function(d) {
             if ((d["mean_year"] < cur_min_year) || (d["mean_year"] >= cur_max_year)) {
                 return 0;
             }
             return d["radius"];
         });
-
-
-
-
-    // d3.selectAll(".timeline_rect")
-    //     .data(timeline_rects)
-    //     .transition()
-    //     .duration(250)
-    //     .attr("y", function(d) {
-    //         return yScale(d["year"]);
-    //     })
-    //     .attr("height", function(d) {
-    //         if ((d["year"] < cur_min_year) || (d["year"] >= cur_max_year)) {
-    //             return 0;
-    //         }
-    //         return yScale(d["year"] + 0.5) - yScale(d["year"]) + 1;
-    //     });
 
     d3.selectAll(".composer_librettist_names")
         .data(composers.concat(librettists))
@@ -1572,140 +880,8 @@ function update_graph() {
             }
             return "16px";
         });
-        // .attr("y", function(d) {
-        //     return yScale(d["mean_year"]);
-        // });
 
 
-
-
-    // map_circles = [];
-    // for (placename of Object.keys(map_nodes)) {
-    //     let years = map_nodes[placename]["years"].sort();
-    //     let longitude = places[placename]["longitude"];
-    //     let latitude = places[placename]["latitude"];
-    //     let i = 0;
-    //     let city_circles = []
-    //     for (year of years) {
-    //         if (year >= cur_min_year && year <= cur_max_year) {
-    //             let circle = {};
-    //             circle["radius"] = range_map(i+1, min_val, max_val, min_node_size, max_node_size);
-    //             let c = color_map(year, min_year, max_year, min_color, max_color);
-    //             circle["color"] = "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
-    //             circle["cx"] = projection([longitude, latitude])[0];
-    //             circle["cy"] = projection([longitude, latitude])[1];
-    //             //circle["stroke"] = (i == years.length - 1);
-    //             city_circles.push(circle);
-    //             i++;
-    //         }
-    //     }         
-    //     city_circles.sort(function(a, b) {
-    //         return b["radius"] - a["radius"];
-    //     });
-    //     if (city_circles.length > 0)
-    //         city_circles[0]["stroke"] = true;
-    //     map_circles = map_circles.concat(...city_circles);
-    // }
-
-
-
-
-    // d3.selectAll(".map_circle").remove();
-
-    // g.cities.selectAll(".circle")
-    //     .data(map_circles)
-    //     .enter()
-    //     .append("circle")
-    //     .attr("class", "map_circle")
-    //     .attr("cx", function(d) {
-    //         return d["cx"];
-    //     })
-    //     .attr("cy", function(d) {
-    //         return d["cy"];
-    //     })
-    //     .attr("r", function(d) {
-    //         return d["radius"];
-    //     })
-    //     .attr("fill", function(d) {
-    //         return d["color"];
-    //     })
-    //     .attr("opacity", 1)
-    //     .attr("stroke-width", function(d) {
-    //         if (d["stroke"])
-    //             return 1;
-    //         else
-    //             return 0;
-    //     })
-    //     .attr("stroke", "black")
-
-
-
-
-
-
-
-    // let x_margin = 4;
-    // g.cities
-    //     .selectAll("rect")
-    //     .data(labelled_map_nodes_lst)
-    //     .enter()
-    //     .append("rect")
-    //     .attr("class", "map_rect")
-    //     .attr("x", function(d, i) {
-    //         let lon = places[d["placename"]]["longitude"];
-    //         let lat = places[d["placename"]]["latitude"];
-    //         let text_width = getTextWidth(d["placename"], "16px arial") + x_margin;
-    //         return projection([lon, lat])[0] - (text_width / 2);
-    //     })
-    //     .attr("y", function(d, i) {
-    //         let lon = places[d["placename"]]["longitude"];
-    //         let lat = places[d["placename"]]["latitude"];          
-            
-    //         let num_performances = d["num_years"];
-    //         let radius = range_map(num_performances, min_val, max_val, min_node_size, max_node_size);
-    //         return projection([lon, lat])[1] + radius + 3;
-    //     })
-    //     .attr("width", function(d) {
-    //         return getTextWidth(d["placename"], "16px arial") + x_margin;
-    //     })
-    //     .attr("height", 18)
-    //     .style("fill", "#faf9f0")
-    //     .attr("stroke", "black")
-    //     .attr("strokewidth", 1)
-    //     .style("opacity", 0.5);
-
-    
-    // console.log("labelled_map_nodes_lst", labelled_map_nodes_lst);
-
-    // g.cities.selectAll("map_text")
-    //     .data(labelled_map_nodes_lst)
-    //     .enter()
-    //     .append("text")
-    //     .attr("class", "chart_text")
-    //     .attr("class", "map_text")
-    //     .attr("x", function(d, i) {
-    //         let lon = places[d["placename"]]["longitude"];
-    //         let lat = places[d["placename"]]["latitude"];
-    //         return projection([lon, lat])[0];
-    //     })
-    //     .attr("y", function(d, i) {
-    //         let lon = places[d["placename"]]["longitude"];
-    //         let lat = places[d["placename"]]["latitude"];          
-            
-    //         let num_performances = d["num_years"];
-    //         let radius = range_map(num_performances, min_val, max_val, min_node_size, max_node_size);
-    //         return projection([lon, lat])[1] + radius + 12;
-    //     })
-        
-    //     .attr("alignment-baseline", "central")
-    //     .attr("text-anchor", "middle")
-    //     .attr("font-size", "16px")
-    //     .text(function(d) { 
-    //         console.log(d["placename"]);
-    //         return d["placename"]; 
-    //     })
-    //     .style("fill", "black")
-    //     .style("cursor", "default");
 }
 
 function draw_graph() {
@@ -1722,16 +898,11 @@ function draw_graph() {
                 .range([1.8*margin, chart_height - 8*margin]);
 
 
-    // let tick_values = [min_year, max_year];
     let tick_values = [];
     for (let i = min_year; i <= max_year; i += 10) {
         tick_values.push(i);
     }
     chart_axis.call(d3.axisLeft(yScale).tickValues(tick_values).tickFormat(d3.format("d")).tickSize(25));
-    //chart_axis.call(d3.axisLeft(yScale).tickValues([min_year, max_year]).tickFormat(d3.format("d")).tickSize(25));
-    
-    // chart_axis.call(g => g.select(".domain").remove());
-    // d3.selectAll("g.tick").attr("class", "axis_text")
 
     timeline_curves = [];
     min_weight = 10000;
@@ -1761,7 +932,7 @@ function draw_graph() {
         let opacity = ((max_opacity - min_opacity) * fraction) + min_opacity;
         let d = {
             "points": points,
-            "color": "white", //'black',
+            "color": "white",
             "opacity": opacity
         }
         timeline_curves.push(d);
@@ -1779,7 +950,6 @@ function draw_graph() {
                 [d["points"][0][0], yScale(d["points"][0][1])],
                 [d["points"][1][0], yScale(d["points"][1][1])]
             ])
-            // return curve(d["points"]);
         })
         .attr('stroke', function(d) {
             return d["color"];
@@ -1871,7 +1041,6 @@ function draw_graph() {
             let c = color_map(year, min_year, max_year, min_color, max_color);
             circle["color"] = "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
             circle["cx"] = composer_col;
-            // circle["cy"] = yScale(composer["mean_year"]);
             circle["mean_year"] = composer["mean_year"];
             circle["stroke"] = (i == years.length - 1);
             comp_circles.push(circle);
@@ -1881,21 +1050,8 @@ function draw_graph() {
             return b["radius"] - a["radius"];
         });
 
-        // let index = 0;
-        // if (timeline_circles.length > 0) {
-        //     index = timeline_circles.length - 1;
-        //     // console.log("timeline_circles", timeline_circles);
-        //     while (comp_circles[0]["mean_year"] >= timeline_circles[index]["mean_year"]) {
-        //         index--;
-        //         if (index < 0) {
-        //             break;
-        //         }
-        //     }
-        //     index++;
-        // }
         let index = 0;
         if (timeline_circles.length > 0) {
-            // console.log(timeline_circles[index]["mean_year"]);
             while (comp_circles[0]["mean_year"] >= timeline_circles[index]["mean_year"]) {
                 index++;
                 if (index == timeline_circles.length) {
@@ -1907,14 +1063,6 @@ function draw_graph() {
             timeline_circles.splice(index, 0, comp_circle);
             index++;
         }
-
-        // for (comp_circle of comp_circles) {
-        //     if (comp_circle[i]["mean_year"] >= timeline_circles[i]["mean_year"]) {
-        //         timeline_circles.push(comp_circle);
-        //     }
-        // } 
-        // composer["mean_year"]
-        // timeline_circles = timeline_circles.concat(...comp_circles);
     }
 
     for (librettist of librettists) {
@@ -1928,7 +1076,6 @@ function draw_graph() {
             let c = color_map(year, min_year, max_year, min_color, max_color);
             circle["color"] = "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")";
             circle["cx"] = librettist_col;
-            // circle["cy"] = yScale(librettist["mean_year"]);
             circle["mean_year"] = librettist["mean_year"];
             circle["stroke"] = (i == years.length - 1);
             lib_circles.push(circle);
@@ -1937,11 +1084,9 @@ function draw_graph() {
         lib_circles.sort(function(a, b) {
             return b["radius"] - a["radius"];
         });
-        // timeline_circles = timeline_circles.concat(...lib_circles);
 
         let index = 0;
         if (timeline_circles.length > 0) {
-            // console.log(timeline_circles[index]["mean_year"]);
             while (lib_circles[0]["mean_year"] >= timeline_circles[index]["mean_year"]) {
                 index++;
                 if (index == timeline_circles.length) {
@@ -1955,12 +1100,6 @@ function draw_graph() {
         }
 
     }
-    // timeline_circles.reverse();
-
-    // timeline_circles.sort(function(a, b) {
-    //     return b["radius"] - a["radius"];
-    // });
-
 
     map_circles = [];
     for (placename of Object.keys(map_nodes)) {
@@ -2091,7 +1230,6 @@ function draw_graph() {
                                     ],
                                 "color": color_map(link[1]["performance_year"], min_year, max_year, min_color, max_color),
                                 "performance_year": link[1]["performance_year"],
-                                //"title": title,
                                 "s_key": librettist + "/" + composer + "/" + title
                             };
                     }
@@ -2115,37 +1253,6 @@ function draw_graph() {
     }
 
 
-
-    // let min_map_edge = 10000;
-    // let max_map_edge = 1;
-    // for (link_name of Object.keys(map_edges)) {
-    //     if (map_edges[link_name]["weight"] > max_map_edge) {
-    //         max_map_edge = map_edges[link_name]["weight"];
-    //     }
-    //     if (map_edges[link_name]["weight"] < min_map_edge) {
-    //         min_map_edge = map_edges[link_name]["weight"];
-    //     }
-    // }
-    // for (link_name of Object.keys(self_map_edges)) {
-    //     if (self_map_edges[link_name]["weight"] > max_map_edge) {
-    //         max_map_edge = self_map_edges[link_name]["weight"];
-    //     }
-    //     if (self_map_edges[link_name]["weight"] < min_map_edge) {
-    //         min_map_edge = self_map_edges[link_name]["weight"];
-    //     }
-    // }
-
-    // for (link_name of Object.keys(map_edges)) {
-    //     let fraction = (map_edges[link_name]["weight"] - min_map_edge) / (max_map_edge - min_map_edge);
-    //     let opacity = ((max_opacity - min_opacity) * fraction) + min_opacity;
-    //     map_edges[link_name]["opacity"] = opacity;
-    // }
-    // for (link_name of Object.keys(self_map_edges)) {
-    //     let fraction = (self_map_edges[link_name]["weight"] - min_map_edge) / (max_map_edge - min_map_edge);
-    //     let opacity = ((max_opacity - min_opacity) * fraction) + min_opacity;
-    //     self_map_edges[link_name]["opacity"] = opacity;
-    // }    
-
     map_edges_lst = [];
     for (linkname of Object.keys(map_edges)) {
         map_edge = {
@@ -2161,12 +1268,8 @@ function draw_graph() {
             "opacity": map_edges[linkname]["opacity"],
             "color": map_edges[linkname]["color"],
             "performance_year": map_edges[linkname]["performance_year"],
-            //"title": map_edges[linkname]["title"]
             "s_key": map_edges[linkname]["s_key"]
         };
-        if (map_edge["title"] === "Antigono") {
-            console.log("ANTIGONO", map_edge);
-        }
         map_edges_lst.push(map_edge);
     }
 
@@ -2224,38 +1327,36 @@ function draw_graph() {
             return yScale(d["year"] + 0.5) - yScale(d["year"]) + 1;
         })
         .attr("width", 20)
-        // .attr("stroke", "black")
-        // .attr("stroke-width", 1)
         .attr("fill", function(d) {
             return d["color"];
         });
 
     g.timeline.selectAll(".circle")
-    .data(timeline_circles)
-    .enter()
-    .append("circle")
-    .attr("class", "timeline_circle")
-    .attr("cx", function(d) {
-        return d["cx"];
-    })
-    .attr("cy", function(d) {
-        return yScale(d["mean_year"]);
-    })
-    .attr("r", function(d) {
-        return d["radius"];
-    })
-    .attr("fill", function(d) {
-        return d["color"];
-    })
-    .attr("stroke-width", function(d) {
-        if (d["stroke"])
-            return 1;
-        else
-            return 0;
-    })
-    .attr("stroke", function(d) {
-        return "black";
-    });
+        .data(timeline_circles)
+        .enter()
+        .append("circle")
+        .attr("class", "timeline_circle")
+        .attr("cx", function(d) {
+            return d["cx"];
+        })
+        .attr("cy", function(d) {
+            return yScale(d["mean_year"]);
+        })
+        .attr("r", function(d) {
+            return d["radius"];
+        })
+        .attr("fill", function(d) {
+            return d["color"];
+        })
+        .attr("stroke-width", function(d) {
+            if (d["stroke"])
+                return 1;
+            else
+                return 0;
+        })
+        .attr("stroke", function(d) {
+            return "black";
+        });
 
     g.timeline.selectAll("text")
         .data(composers.concat(librettists))
@@ -2316,7 +1417,7 @@ function draw_graph() {
     let timeline_width = $("#timeline_container").width();
     let timeline_legend_width = 220;
     let timeline_legend_height = 200;
-    let timeline_year_legend_x = 10; // timeline_width - timeline_legend_width - 10;
+    let timeline_year_legend_x = 10;
     let timeline_year_legend_y = chart_height - timeline_legend_height + 1 - 10;
     g.timeline.selectAll("timeline_year_legend_rect")
         .data([0])
@@ -2329,7 +1430,7 @@ function draw_graph() {
         .attr("rx", 15)
         .attr("ry", 15)
         .attr("stroke", "white")
-        .attr("fill", "black") //"#f7f6f2")
+        .attr("fill", "black")
         .attr("stroke-width", 1);
 
         g.timeline.selectAll("timeline_year_legend_label")
@@ -2355,7 +1456,7 @@ function draw_graph() {
         "color": min_color
     },
     {
-        "text": String((min_year + max_year) / 2), //Math.floor((min_val + max_val) / 2)),
+        "text": String((min_year + max_year) / 2),
         "radius": Math.floor((min_node_size + max_node_size) / 2),
         "cx": circles_timeline_col,
         "cy": chart_height - timeline_legend_height + 1 - 10 + 20 + 100,
@@ -2385,9 +1486,7 @@ function draw_graph() {
             return d["radius"];
         })
         .attr("fill", function(d) {
-            let c = "rgb(" + d["color"][0] + "," + d["color"][1] + "," + d["color"][2] + ")";
-            console.log("c", c);
-            return c;
+            return "rgb(" + d["color"][0] + "," + d["color"][1] + "," + d["color"][2] + ")";
         })
         .attr("stroke", "black")
         .attr("stroke-width", 1);
@@ -2406,10 +1505,7 @@ function draw_graph() {
         .attr("r", function(d) {
             return d["radius"] - 5;
         })
-        .attr("fill", function(d) {
-            let c = "black";
-            return c;
-        })
+        .attr("fill", "black")
         .attr("stroke", "black")
         .attr("stroke-width", 1);
 
@@ -2444,7 +1540,7 @@ function draw_graph() {
               .attr("rx", 15)
               .attr("ry", 15)
               .attr("stroke", "white")
-              .attr("fill", "black") //"#f7f6f2")
+              .attr("fill", "black")
               .attr("stroke-width", 1);
 
     g.timeline.selectAll("timeline_colab_legend_label")
@@ -2521,29 +1617,6 @@ function draw_graph() {
             .text(function(d) { return d["text"]; });
 
 
-
-    // for (map_node of map_nodes_lst) {
-    //     let placename = map_node["placename"];
-    //     if ("premieres" in places[placename] && "outgoing" in places[placename]) {
-    //         map_node["popularity_ratio"] = places[placename]["outgoing"].length / places[placename]["premieres"].length;
-    //     }
-    //     else {
-    //         map_node["popularity_ratio"] = null;
-    //     }
-    // }
-    // let min_popularity_ratio = 10000;
-    // let max_popularity_ratio = 0;
-    // for (map_node of map_nodes_lst) {
-    //     if (map_node["popularity_ratio"] !== null) {
-    //         if (map_node["popularity_ratio"] > max_popularity_ratio)
-    //             max_popularity_ratio = map_node["popularity_ratio"];
-    //         else if (map_node["popularity_ratio"] < min_popularity_ratio) {
-    //             min_popularity_ratio = map_node["popularity_ratio"];
-    //         }
-    //     }
-    // }
-
-
     g.cities.selectAll(".circle")
         .data(map_circles)
         .enter()
@@ -2587,7 +1660,6 @@ function draw_graph() {
     for (let i = 0; i < 16; i++) {
         labelled_map_nodes.push(map_nodes_lst[i]["placename"]);
     }
-    //let labelled_map_nodes_lst = map_nodes_lst.slice(0, 16);
 
 
     let x_margin = 4;
@@ -2621,17 +1693,12 @@ function draw_graph() {
         .attr("strokewidth", 1)
         .style("opacity", function(d) {
             if (labelled_map_nodes.includes(d["placename"])) {
-                return 0.6; //0.5);
+                return 0.6;
             }
             else {
                 return 0;
             }
         });
-
-
-
-
-
 
 
     g.cities.selectAll("text")
@@ -2662,7 +1729,7 @@ function draw_graph() {
         .style("cursor", "default")
         .style("opacity", function(d) {
             if (labelled_map_nodes.includes(d["placename"])) {
-                return 1; //0.5);
+                return 1;
             }
             else {
                 return 0;
@@ -2863,9 +1930,6 @@ function draw_map_edges(map_nodes_lst, map_edges_lst) {
                         links.attr("d", line)
                     })
                     .on("end", function(d) {
-                        console.log("layout complete");
-                        // enable slider
-
                         $("#librettist_combo").prop("disabled", false);
                         $("#composer_combo").prop("disabled", false);
                         $("#opera_combo").prop("disabled", false);

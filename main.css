@@ -1,5 +1,5 @@
 body {
-	background-color: black; /* #f7f6f2; */
+	background-color: black;
 }
 
 div {
@@ -9,7 +9,7 @@ div {
 
 
 .continent {
-	fill: grey; /*#f0e4dd;*/
+	fill: grey;
 	stroke: none;
 }
 
@@ -27,7 +27,7 @@ div {
 
 
 text {
-	fill: rgb(255, 204, 163); /* black;*/
+	fill: rgb(255, 204, 163);
 }
 
 .label_text {
@@ -43,10 +43,10 @@ text {
 #timeline_container {
     width: 500px; 
     height: 1000px; 
-    background-color: black; /* #faf9f0;*/
-    border-top: 1px solid white; /*black;*/
-    border-left: 1px solid white; /* black;*/
-    border-bottom: 1px solid white; /*black;*/
+    background-color: black;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-bottom: 1px solid white;
 	border-top-left-radius: 25px;
 	border-bottom-left-radius: 25px;
 	padding-left: 20px;
@@ -55,13 +55,13 @@ text {
 #map_container {
 	width: 1300px; 
 	height: 1000px; 
-	border: 1px solid white; /* black;*/
+	border: 1px solid white;
 	border-top-right-radius: 25px;
 	border-bottom-right-radius: 25px;
 }
 
 #map_svg {
-	background-color: black; /* #f5f9fa; */
+	background-color: black;
 	border-top-right-radius: 25px;
 	border-bottom-right-radius: 25px;
 }
@@ -69,7 +69,7 @@ text {
 
 
 .nonfixed_dropdown {
-	background-color: black; /*#222621;*/
+	background-color: black;
 	color:  white;
 	width:  100%;
 	padding: 2px 0px;
@@ -79,12 +79,12 @@ text {
  
 
 #slider-range .ui-slider-range { 
-	background: grey; /*white; */
+	background: grey;
 }
 
 #slider-range .ui-state-default, .ui-widget-content .ui-state-default {
 	background: none;
-	background-color: grey; /*white; *//*#FFF; */
+	background-color: grey;
 	border: 1px solid black;
 }
 
